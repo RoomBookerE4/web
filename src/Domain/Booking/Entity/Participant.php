@@ -31,6 +31,10 @@ class Participant
 
     /**
      * @var string
+     * 
+     * Accepted => 'accepted';
+     * Rejected => 'rejected';
+     * Pending => 'pending';
      */
     #[ORM\Column(name: 'invitationStatus', type: 'string', length: 255, nullable: false)]
     private $invitationStatus;
