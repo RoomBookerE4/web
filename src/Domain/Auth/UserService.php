@@ -9,7 +9,6 @@ use Doctrine\ORM\EntityNotFoundException;
 
 /**
  * Handle changes for a user.
- * Pas de besoin actuellement.
  */
 class UserService{
 
