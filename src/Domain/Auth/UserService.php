@@ -34,15 +34,8 @@ class UserService{
      * @param [type] $surname
      * @return void
      */
-    public function createUser(string $name, string $role, string $password, string $surname): User
+    public function createUser(User $user): User
     {
-        // Assign values to User object.
-        $user = new User();
-        $user->setName($name);
-        $user->setRole($role);
-        $user->setRoles([$role]);
-        $user->setPassword($password);
-        $user->setSurname($surname);
 
         // Persist into database.
         $this->em->persist($user);

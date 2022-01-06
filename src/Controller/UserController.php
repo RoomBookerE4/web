@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Form\UserForm;
 use App\Domain\Auth\UserRoles;
+use App\Domain\Auth\Entity\User;
 use App\Domain\Auth\UserService;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,14 +29,30 @@ class UserController extends AbstractController
     }
 
     #[Route('/create', name: 'create')]
-    public function create(): Response
+    public function create(Request $request): Response
     {
 
-        
-        $this->userService->createUser("Albert", UserRoles::STUDENT, "password", "Duperrsi");
+        $user = new User();
+        $form = $this->createForm(UserForm::class, $user);
 
-        return $this->render('user/index.html.twig', [
-            'controller_name' => "J'ai créé Albert"
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $user = $form->getData();
+            dump($user);
+
+            $this->userService->createUser($user);
+
+            return $this->render('user/success.html.twig', [
+                'controller_name' => "success"
+            ]);
+        }
+
+        
+        // $this->userService->createUser("Albert", UserRoles::STUDENT, "password", "Duperrsi");
+
+        return $this->render('user/new.html.twig', [
+            'controller_name' => "J'ai créé Albert", 
+            'form' => $form->createView()
         ]);
     }
 
