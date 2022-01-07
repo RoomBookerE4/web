@@ -43,7 +43,7 @@ class Participant
      * @var Reservation
      */
     #[ORM\ManyToOne(targetEntity: Reservation::class)]
-    #[ORM\JoinColumn(name: 'idReservation', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'idReservation', referencedColumnName: 'id', nullable: false)]
     private $reservation;
 
     /**
@@ -106,6 +106,5 @@ class Participant
 
         return $this;
     }
-
 
 }

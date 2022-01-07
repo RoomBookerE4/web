@@ -1,0 +1,15 @@
+{{ form_start(form) }}
+    <div class="form-group">
+        {{ form_label(form.timeStart) }}
+        {{ form_widget(form.timeStart) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(form.timeEnd) }}
+        {{ form_widget(form.timeEnd) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(form.room) }}
+        {{ form_widget(form.room) }}
+    </div>
+    {# <button type="submit" class="btn btn-primary">Submit</button> #}
+{{ form_end(form) }}
