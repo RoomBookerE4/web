@@ -25,7 +25,9 @@ class BookingController extends AbstractController
             $manager_registry->getManager()->persist($reservation);
             $manager_registry->getManager()->flush();
 
-            return $this->render('user/success.html.twig', [
+            $this->addFlash('success', 'Reservation effectuée ! Vive Beaudoux!');
+
+            return $this->render('home/index.html.twig', [
                 'controller_name' => "success"
             ]);
         }
