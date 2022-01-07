@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Domain\Auth\Repository\UserRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use \App\Domain\Booking\Entity\Establishment;
 
 #[ORM\Table(name:"User")]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -32,6 +33,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(name: "surname", type: "string", length: 255, nullable: false)]
     private $surname;
+
+    #[ORM\ManyToOne(targetEntity: Establishment::class, inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $establishment;
 
     public function getId(): ?int
     {
@@ -135,6 +140,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getEstablishment(): ?Establishment
+    {
+        return $this->establishment;
+    }
+
+    public function setEstablishment(?Establishment $establishment): self
+    {
+        $this->establishment = $establishment;
 
         return $this;
     }
