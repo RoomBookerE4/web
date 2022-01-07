@@ -2,6 +2,9 @@
 
 namespace App\Domain\Booking\Entity;
 
+use App\Domain\Auth\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -34,14 +37,22 @@ class Establishment
     /**
      * @var \DateTime
      */
-    #[ORM\Column(name: 'timeOpen', type: 'datetime', nullable: false)]
+    #[ORM\Column(name: 'timeOpen', type: 'time', nullable: false)]
     private $timeopen;
 
     /**
      * @var \DateTime
      */
-    #[ORM\Column(name: 'timeClose', type: 'datetime', nullable: false)]
+    #[ORM\Column(name: 'timeClose', type: 'time', nullable: false)]
     private $timeclose;
+
+    #[ORM\OneToMany(mappedBy: 'establishment', targetEntity: User::class, orphanRemoval: true)]
+    private $users;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -92,6 +103,36 @@ class Establishment
     public function setTimeclose(\DateTimeInterface $timeclose): self
     {
         $this->timeclose = $timeclose;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setEstablishment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getEstablishment() === $this) {
+                $user->setEstablishment(null);
+            }
+        }
 
         return $this;
     }
