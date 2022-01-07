@@ -28,17 +28,15 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/create', name: 'create')]
+    #[Route('/create', name: 'create', methods: ['POST', 'GET'])]
     public function create(Request $request): Response
     {
-
         $user = new User();
         $form = $this->createForm(UserForm::class, $user);
 
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             $user = $form->getData();
-            dump($user);
 
             $this->userService->createUser($user);
 
@@ -46,9 +44,6 @@ class UserController extends AbstractController
                 'controller_name' => "success"
             ]);
         }
-
-        
-        // $this->userService->createUser("Albert", UserRoles::STUDENT, "password", "Duperrsi");
 
         return $this->render('user/new.html.twig', [
             'controller_name' => "J'ai créé Albert", 
