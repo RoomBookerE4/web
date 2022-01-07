@@ -3,7 +3,7 @@ security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
-        App\Entity\User:
+        App\Domain\Auth\Entity\User:
             algorithm: auto
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
@@ -11,8 +11,8 @@ security:
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             entity:
-                class: App\Entity\User
-                property: name
+                class: App\Domain\Auth\Entity\User
+                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -20,7 +20,7 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            custom_authenticator: App\Security\RoomBookerAuthenticator
+            custom_authenticator: App\Domain\Auth\RoomBookerAuthenticator
             logout:
                 path: app_logout
                 # where to redirect after logout
@@ -37,6 +37,7 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        # - { path: ^/, roles: ROLE_USER } # Redirects all not connected users to login page.
 
 when@test:
     security:

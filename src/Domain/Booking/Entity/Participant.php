@@ -11,7 +11,7 @@ use App\Domain\Booking\Entity\Reservation;
  */
 #[ORM\Entity(repositoryClass: \App\Domain\Booking\Repository\ParticipantRepository::class)]
 #[ORM\Table(name:"Participant")]
-#[ORM\Index(fields: ['idUser', 'idReservation'])]
+#[ORM\Index(columns: ['idUser', 'idReservation'])]
 class Participant
 {
     /**

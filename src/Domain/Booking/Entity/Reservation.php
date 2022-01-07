@@ -10,7 +10,7 @@ use App\Domain\Booking\Entity\Room;
  */
 #[ORM\Entity(repositoryClass: \App\Domain\Booking\Repository\ReservationRepository::class)]
 #[ORM\Table(name:"Reservation")]
-#[ORM\Index(fields: ['idRoom'])]
+#[ORM\Index(columns: ['idRoom'])]
 class Reservation
 {
     /**
