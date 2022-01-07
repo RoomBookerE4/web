@@ -1,20 +1,28 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}RoomBooker - Outil de réservation de salles{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/simon/OneDrive/Documents/ESEO/I2/INFRA/room_booker/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/simon/OneDrive/Documents/ESEO/I2/INFRA/room_booker/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
-    </ul>
+<div class="row">
+    <div class="col-md-8 col-xs-12 col-lg-8 h-100">
+        <div class="card">
+            <div class="card-header card-outline-primary">Réserver une salle</div>
+            <div class="card-body">Formulaire de réservation de la salle</div>
+        </div>
+    </div>
+    <div class="col-md-4 col-xs-12 col-lg-4 h-100">
+        <div class="card">
+            <div class="card-header card-outline-primary">Historique</div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Meeting 14:30 <span class="text-muted fs-6"> - Aujourd'hui. Salle Amérique</span></li>
+                    <li class="list-group-item">A second item</li>
+                    <li class="list-group-item">A third item</li>
+                    <li class="list-group-item">A fourth item</li>
+                    <li class="list-group-item">And a fifth one</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
