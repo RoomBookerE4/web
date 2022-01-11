@@ -14,7 +14,7 @@ use \App\Domain\Booking\Entity\Participant;
 #[ORM\Entity(repositoryClass: \App\Domain\Booking\Repository\ReservationRepository::class)]
 #[ORM\Table(name:"Reservation")]
 #[ORM\Index(columns: ['idRoom'])]
-class Reservation
+class Booking
 {
     /**
      * @var int
@@ -104,7 +104,7 @@ class Reservation
     {
         if (!$this->participants->contains($participant)) {
             $this->participants[] = $participant;
-            $participant->setResa($this);
+            $participant->setBooking($this);
         }
 
         return $this;
@@ -114,8 +114,8 @@ class Reservation
     {
         if ($this->participants->removeElement($participant)) {
             // set the owning side to null (unless already changed)
-            if ($participant->getResa() === $this) {
-                $participant->setResa(null);
+            if ($participant->getBooking() === $this) {
+                $participant->setBooking(null);
             }
         }
 

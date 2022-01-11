@@ -3,6 +3,9 @@
 namespace App\Controller;
 
 use App\Form\BookingForm;
+use App\Domain\Booking\BookingFormDTO;
+use App\Domain\Booking\BookingService;
+use App\Domain\Booking\Entity\Booking;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Domain\Booking\Entity\Reservation;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,18 +15,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BookingController extends AbstractController
 {
-    #[Route('/booking', name: 'booking')]
-    public function booking(Request $request, ManagerRegistry $manager_registry): Response
+    public function __construct(private BookingService $bookingService)
     {
-        $reservation = new Reservation();
-        $form = $this->createForm(BookingForm::class, $reservation, ['action' => $this->generateUrl('booking')]);
+        
+    }
+
+    #[Route('/booking', name: 'booking')]
+    public function booking(Request $request): Response
+    {
+        $booking = new BookingFormDTO();
+        $form = $this->createForm(BookingForm::class, $booking, ['action' => $this->generateUrl('booking')]);
 
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
-            $reservation = $form->getData();
-            dump($reservation);
-            $manager_registry->getManager()->persist($reservation);
-            $manager_registry->getManager()->flush();
+            $booking = $form->getData();
+            dump($booking);
+            
+            $this->bookingService->book($booking);
 
             $this->addFlash('success', 'Reservation effectuée ! Vive Beaudoux!');
 

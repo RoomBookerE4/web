@@ -62,7 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->name;
+        return (string) sprintf("%s %s", $this->name, $this->surname);
     }
 
     /**
@@ -154,5 +154,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->establishment = $establishment;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getUserIdentifier();
     }
 }

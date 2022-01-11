@@ -4,7 +4,7 @@ namespace App\Domain\Booking\Entity;
 
 use App\Domain\Auth\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
-use App\Domain\Booking\Entity\Reservation;
+use App\Domain\Booking\Entity\Booking;
 
 /**
  * Participant
@@ -40,11 +40,11 @@ class Participant
     private $invitationStatus;
 
     /**
-     * @var Reservation
+     * @var Booking
      */
-    #[ORM\ManyToOne(targetEntity: Reservation::class)]
+    #[ORM\ManyToOne(targetEntity: Booking::class)]
     #[ORM\JoinColumn(name: 'idReservation', referencedColumnName: 'id', nullable: false)]
-    private $reservation;
+    private $booking;
 
     /**
      * @var User
@@ -83,14 +83,14 @@ class Participant
         return $this;
     }
 
-    public function getReservation(): ?Reservation
+    public function getBooking(): ?Booking
     {
-        return $this->reservation;
+        return $this->booking;
     }
 
-    public function setReservation(?Reservation $reservation): self
+    public function setBooking(?Booking $booking): self
     {
-        $this->reservation = $reservation;
+        $this->booking = $booking;
 
         return $this;
     }
