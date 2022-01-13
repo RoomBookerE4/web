@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 abstract class AbstractController extends \Symfony\Bundle\FrameworkBundle\Controller\AbstractController{
 
-    protected function getUserEntity(): User
+    protected function getUserEntity(): ?User
     {
         return $this->getUser();
     }

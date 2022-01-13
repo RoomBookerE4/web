@@ -38,6 +38,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: false)]
     private $establishment;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $passwordForgottenAt;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $resetToken;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -159,5 +165,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __toString(): string
     {
         return $this->getUserIdentifier();
+    }
+
+    public function getPasswordForgottenAt(): ?\DateTimeInterface
+    {
+        return $this->passwordForgottenAt;
+    }
+
+    public function setPasswordForgottenAt(?\DateTimeInterface $passwordForgottenAt): self
+    {
+        $this->passwordForgottenAt = $passwordForgottenAt;
+
+        return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): self
+    {
+        $this->resetToken = $resetToken;
+
+        return $this;
     }
 }
