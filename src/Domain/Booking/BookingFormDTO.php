@@ -51,7 +51,6 @@ class BookingFormDTO{
      *
      * @var ArrayCollection
      */
-    #[Assert\NotNull(message: "L'heure de début de la réunion doit être précisé.")]
     private ArrayCollection $participants;
 
 
