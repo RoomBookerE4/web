@@ -66,4 +66,16 @@ class UserService{
         $this->em->flush();
     }
 
+    /**
+     * Allow to find a user by its id.
+     * Return a User entity, not a UserInterface object.
+     *
+     * @param integer $id
+     * @return User
+     */
+    public function find(int $id): User
+    {
+        return $this->em->find(User::class, $id);
+    }
+
 }

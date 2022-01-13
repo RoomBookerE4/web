@@ -8,8 +8,8 @@ namespace App\Domain\Auth;
  */
 abstract class UserRoles{
 
-    public const STUDENT    = 'student';
-    public const TEACHER    = 'teacher';
-    public const ADMIN      = 'admin';
+    public const STUDENT    = 'Etudiant';
+    public const TEACHER    = 'Enseignant';
+    public const ADMIN      = 'Administrateur';
 
 }
