@@ -144,7 +144,7 @@ class BookingService{
     {
         $meetings = $this->bookingRepository->findMeetings(null, $room, $start, $end);
 
-        // Checks wether the meetings are "null" or a proper array ...
+        // Checks wether the meetings are "null" or a proper array ... ternary
 
         return true;
     }
