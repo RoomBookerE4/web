@@ -8,6 +8,8 @@ use DateTimeInterface;
 use App\Domain\Booking\Entity\Room;
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * Booking Form DTO.
  */
@@ -16,23 +18,32 @@ class BookingFormDTO{
     /**
      * Date of the actual booking.
      *
-     * @var DateTimeInterface
+     * @var DateTime
      */
-    private DateTimeInterface $date;
+    #[Assert\NotNull(message: 'La date de la réservation ne peut pas être nulle.')]
+    #[Assert\Date]
+    #[Assert\GreaterThanOrEqual('today')]
+    private DateTime $date;
 
     /**
      * @var \DateTimeInterface
      */
+    #[Assert\NotNull(message: "L'heure de début de la réunion doit être précisée.")]
+    #[Assert\Time(message: "L'heure de début de réunion ne correspond à aucun format de date connu.")]
     private DateTimeInterface $timeStart;
 
     /**
      * @var \DateTimeInterface
      */
+    #[Assert\NotNull(message: "L'heure de fin de la réunion doit être précisée.")]
+    #[Assert\GreaterThanOrEqual(propertyPath: 'timeStart')]
+    #[Assert\Time(message: "L'heure de fin de réunion ne correspond à aucun format de date connu.")]
     private DateTimeInterface $timeEnd;
 
     /**
      * @var Room
      */
+    #[Assert\NotNull(message: "Une salle doit être spécifiée.")]
     private Room $room;
 
     /**
@@ -40,13 +51,14 @@ class BookingFormDTO{
      *
      * @var ArrayCollection
      */
+    #[Assert\NotNull(message: "L'heure de début de la réunion doit être précisé.")]
     private ArrayCollection $participants;
 
 
     /**
      * Get date of the actual booking.
      *
-     * @return  DateTimeInterface
+     * @return  DateTime
      */ 
     public function getDate()
     {
@@ -56,11 +68,11 @@ class BookingFormDTO{
     /**
      * Set date of the actual booking.
      *
-     * @param  DateTimeInterface  $date  Date of the actual booking.
+     * @param  DateTime  $date  Date of the actual booking.
      *
      * @return  self
      */ 
-    public function setDate(DateTimeInterface $date)
+    public function setDate(DateTime $date)
     {
         $this->date = $date;
 

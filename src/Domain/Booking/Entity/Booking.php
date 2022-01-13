@@ -11,7 +11,7 @@ use \App\Domain\Booking\Entity\Participant;
 /**
  * Reservation
  */
-#[ORM\Entity(repositoryClass: \App\Domain\Booking\Repository\ReservationRepository::class)]
+#[ORM\Entity(repositoryClass: \App\Domain\Booking\Repository\BookingRepository::class)]
 #[ORM\Table(name:"Reservation")]
 #[ORM\Index(columns: ['idRoom'])]
 class Booking
@@ -43,7 +43,7 @@ class Booking
     #[ORM\JoinColumn(name: 'idRoom', referencedColumnName: 'id')]
     private $room;
 
-    #[ORM\OneToMany(mappedBy: 'reservation', targetEntity: Participant::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'reservation', targetEntity: Participant::class, orphanRemoval: true, cascade: ['persist'])]
     private $participants;
 
     public function __construct()

@@ -5,6 +5,7 @@ namespace App\Domain\Booking\Entity;
 use App\Domain\Auth\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use App\Domain\Booking\Entity\Booking;
+use App\Domain\Booking\InvitationStatus;
 
 /**
  * Participant
@@ -105,6 +106,11 @@ class Participant
         $this->user = $user;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return sprintf("Invitation de %s, du %s - Salle %s", $this->getUser(), $this->getBooking()->getTimeStart()->format('H:m:s - d/m/Y'), $this->getBooking()->getRoom());
     }
 
 }

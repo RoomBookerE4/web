@@ -9,7 +9,6 @@ use App\Domain\Auth\UserService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/user', name: 'user_')] // Defines all the routes in this controller will be preceded by "/user".
 class UserController extends AbstractController
