@@ -132,4 +132,21 @@ class BookingService{
         return $this->findMeetings($user, null, null, new \DateTime());
     }
 
+    /**
+     * Checks wether a room is booked or not at a given time.
+     *
+     * @param Room $room
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return boolean
+     */
+    public function isRoomBooked(Room $room, DateTime $start, DateTime $end): bool
+    {
+        $meetings = $this->bookingRepository->findMeetings(null, $room, $start, $end);
+
+        // Checks wether the meetings are "null" or a proper array ...
+
+        return true;
+    }
+
 }
