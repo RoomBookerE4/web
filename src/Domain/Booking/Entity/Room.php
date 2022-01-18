@@ -64,6 +64,9 @@ class Room
     #[ORM\JoinColumn(name: 'idEstablishment', referencedColumnName: 'id')]
     private $establishment;
 
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private $floor;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -156,6 +159,18 @@ class Room
     public function __toString(): string
     {
         return $this->getName()."-".$this->getIdNumber();
+    }
+
+    public function getFloor(): ?int
+    {
+        return $this->floor;
+    }
+
+    public function setFloor(?int $floor): self
+    {
+        $this->floor = $floor;
+
+        return $this;
     }
 
 
