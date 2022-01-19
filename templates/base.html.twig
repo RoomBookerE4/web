@@ -38,7 +38,7 @@
                     </div>
                     <div class="d-flex">
                     {% if is_granted('ROLE_USER') %}
-                        <span>{{ app.user.surname }} - {{ app.user.name }}</span>
+                        <span id="username" class="text-white">Bonjour, {{ app.user.name ~ " " ~ app.user.surname }}</span>
                     {% endif %}
                     </div>
                 </div>

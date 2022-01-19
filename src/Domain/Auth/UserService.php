@@ -41,7 +41,6 @@ class UserService{
      */
     public function createUser(User $user): User
     {
-
         // Persist into database.
         $this->em->persist($user);
         // Flushing : refresh the objects with persisted changes.

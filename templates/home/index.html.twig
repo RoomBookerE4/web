@@ -6,7 +6,9 @@
 <div class="row">
     <div class="col-md-12 col-xs-12 col-lg-8">
         <div class="card">
-            <div class="card-header card-outline-primary">Réserver une salle</div>
+            <div class="card-header card-outline-primary">
+                <h4 class="card-title">Réserver une salle</h4>
+            </div>
             <div class="card-body">
                 {{ render(controller(
                     'App\\Controller\\BookingController::booking'
@@ -16,7 +18,9 @@
     </div>
     <div class="col-md-12 col-xs-12 col-lg-4">
         <div class="card">
-            <div class="card-header card-outline-primary">Historique</div>
+            <div class="card-header card-outline-primary">
+                <h5 class="card-title">Mes réservations</h4>
+            </div>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
                 {% for meeting in meetings %}
