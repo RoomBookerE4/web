@@ -19,7 +19,8 @@ class BookingService{
 
     public function __construct(
         private EntityManagerInterface $em,
-        private BookingRepository $bookingRepository
+        private BookingRepository $bookingRepository,
+        private MailerService $mailerService
     )
     {
         
@@ -75,7 +76,12 @@ class BookingService{
 
             // TODO : SEND E-MAILS TO EACH PARTICIPANT
             try{
-                // Send email.
+                
+                $to = $participantUser->getEmail();
+                $subject = "Invitation à une réunion";
+                $text = "Body of the mail";
+
+                $mailerService.sendEmail($to, $subject, $text);
             }
             catch(\Exception $e){
                 throw new CannotBookException("Envoi de mail impossible.", 1, $e);
