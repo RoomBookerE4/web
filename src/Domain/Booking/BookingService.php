@@ -76,19 +76,19 @@ class BookingService{
             );
 
             // TODO : SEND E-MAILS TO EACH PARTICIPANT
-            $to = $participantUser->getEmail();
-            $subject = "Invitation à une réunion";
-            $text = "Body of the mail";
-            dump($to, $subject, $text);
            
-            // try{
-                //$this->mailerService->sendEmail($to, $subject, $text);
+            try{
+                $to = "alexandre.halope@reseau.eseo.fr";//$participantUser->getEmail();
+                $subject = "Invitation à une réunion";
+                $text = "Body of the mail";
+                dump($to, $subject, $text);
+                $this->mailerService->sendEmail($to, $subject, $text);
                
-            // }
-            // catch(\Exception $e){
-            //     throw new CannotBookException("Envoi de mail impossible.", 1, $e);
+            }
+            catch(\Exception $e){
+                throw new CannotBookException("Envoi de mail impossible.", 1, $e);
                 
-            // }
+            }
         }
 
         try{
