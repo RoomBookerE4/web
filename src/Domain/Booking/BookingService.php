@@ -2,15 +2,16 @@
 
 namespace App\Domain\Booking;
 
-use App\Domain\Auth\Entity\User;
-use App\Domain\Booking\Entity\Booking;
-use App\Domain\Booking\Entity\Participant;
-use App\Domain\Booking\Entity\Room;
-use App\Domain\Booking\Exception\CannotBookException;
-use App\Domain\Booking\Repository\BookingRepository;
 use DateTime;
 use DateTimeInterface;
+use App\Domain\Auth\Entity\User;
+use App\Domain\Booking\Entity\Room;
+use App\Domain\Shared\MailerService;
+use App\Domain\Booking\Entity\Booking;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Domain\Booking\Entity\Participant;
+use App\Domain\Booking\Repository\BookingRepository;
+use App\Domain\Booking\Exception\CannotBookException;
 
 /**
  * Handles mutations for Booking.
