@@ -82,7 +82,7 @@ class BookingService{
                 $subject = "Invitation à une réunion";
                 $text = "Body of the mail";
 
-                $mailerService.sendEmail($to, $subject, $text);
+                //$this->mailerService->sendEmail($to, $subject, $text);
             }
             catch(\Exception $e){
                 throw new CannotBookException("Envoi de mail impossible.", 1, $e);
