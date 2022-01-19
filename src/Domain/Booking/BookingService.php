@@ -82,7 +82,7 @@ class BookingService{
             dump($to, $subject, $text);
            
             // try{
-                $this->mailerService->sendEmail($to, $subject, $text);
+                //$this->mailerService->sendEmail($to, $subject, $text);
                
             // }
             // catch(\Exception $e){

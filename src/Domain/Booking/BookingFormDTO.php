@@ -23,14 +23,14 @@ class BookingFormDTO{
     #[Assert\NotNull(message: 'La date de la réservation ne peut pas être nulle.')]
     #[Assert\Date]
     #[Assert\GreaterThanOrEqual('today')]
-    private DateTime $date;
+    private $date;
 
     /**
      * @var \DateTimeInterface
      */
     #[Assert\NotNull(message: "L'heure de début de la réunion doit être précisée.")]
     #[Assert\Time(message: "L'heure de début de réunion ne correspond à aucun format de date connu.")]
-    private DateTimeInterface $timeStart;
+    private $timeStart;
 
     /**
      * @var \DateTimeInterface
@@ -38,7 +38,7 @@ class BookingFormDTO{
     #[Assert\NotNull(message: "L'heure de fin de la réunion doit être précisée.")]
     #[Assert\GreaterThanOrEqual(propertyPath: 'timeStart')]
     #[Assert\Time(message: "L'heure de fin de réunion ne correspond à aucun format de date connu.")]
-    private DateTimeInterface $timeEnd;
+    private $timeEnd;
 
     /**
      * @var Room

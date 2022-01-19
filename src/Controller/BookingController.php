@@ -36,7 +36,7 @@ class BookingController extends AbstractController
             $booking = $form->getData();
             
             // try{
-                $this->bookingService->book($booking, $this->getUser());
+            $this->bookingService->book($booking, $this->getUser());
             // }
             // catch(CannotBookException $e){
             //     $this->addFlash('danger', 'Impossible de réserver la salle.');
