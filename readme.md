@@ -12,11 +12,11 @@ Technical
 
 # TODO:
 
-- Envoyer une invitation (email) [SIMON]
-- Envoi des mails [SIMON]
-- Annuler un meeting [SIMON]
+- Envoyer une invitation (email) [SIMON] ✅
+- Envoi des mails [SIMON] ✅
+- Annuler un meeting [SIMON] ✅
 - Check if room is already booked [SIMON]
-- Accept or reject an invitation [ALEXANDRE]
+- Accept or reject an invitation [ALEXANDRE] ✅
 - Notify participants of a canceled meeting. [SIMON]
 - Rajouter espace entre les deux cards page d'accueil. [SIMON]
 - Authentification après mot de passe oublié [ALEXANDRE]
