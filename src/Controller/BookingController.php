@@ -70,9 +70,9 @@ class BookingController extends AbstractController
 
         try{
             match($state){
-                InvitationStatus::ACCEPTED  => $this->bookingService->accept($booking, $user),
-                InvitationStatus::REJECTED  => $this->bookingService->reject($booking, $user),
-                InvitationStatus::PENDING   => $this->bookingService->pending($booking, $user)
+                InvitationStatus::ACCEPTED  => $this->bookingService->accept($booking, $user) && $this->addFlash('success', 'Invitation acceptée'),
+                InvitationStatus::REJECTED  => $this->bookingService->reject($booking, $user) && $this->addFlash('danger', 'Invitation refusée'),
+                InvitationStatus::PENDING   => $this->bookingService->pending($booking, $user) && $this->addFlash('notice', 'Invitation en attente')
             };
         }
         catch(\UnhandledMatchError $e){
