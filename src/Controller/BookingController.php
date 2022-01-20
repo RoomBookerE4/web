@@ -2,14 +2,21 @@
 
 namespace App\Controller;
 
+use App\Domain\Auth\Entity\User;
 use App\Domain\Auth\UserService;
 use App\Form\BookingForm;
 use App\Domain\Booking\BookingFormDTO;
 use App\Domain\Booking\BookingService;
+use App\Domain\Booking\Entity\Booking;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Domain\Booking\Exception\CannotBookException;
+use App\Domain\Booking\InvitationStatus;
+use LogicException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class BookingController extends AbstractController
 {
@@ -35,12 +42,12 @@ class BookingController extends AbstractController
         if($form->isSubmitted() && $form->isValid()){
             $booking = $form->getData();
             
-            // try{
-            $this->bookingService->book($booking, $this->getUser());
-            // }
-            // catch(CannotBookException $e){
-            //     $this->addFlash('danger', 'Impossible de réserver la salle.');
-            // }
+            try{
+                $this->bookingService->book($booking, $this->getUser());
+            }
+            catch(CannotBookException $e){
+                $this->addFlash('danger', 'Impossible de réserver la salle.');
+            }
 
             $this->addFlash('success', 'Reservation effectuée !');
 
@@ -50,6 +57,29 @@ class BookingController extends AbstractController
         return $this->render('booking/_form.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+    #[Route('/invitation/{id}/{userId}/{state}', name: "invitation_answer")]
+    #[Entity("user", expr: "repository.find(userId)", class: User::class)]
+    #[IsGranted("ROLE_USER")]
+    public function invitationAnswer(Booking $booking, User $user, string $state, Request $request): Response
+    {
+        if($user != $this->getUserEntity()){
+            throw new AccessDeniedException("Impossible d'accepter ou refuser une invitation qui ne vous est pas destinée.");
+        }
+
+        try{
+            match($state){
+                InvitationStatus::ACCEPTED  => $this->bookingService->accept($booking, $user),
+                InvitationStatus::REJECTED  => $this->bookingService->reject($booking, $user),
+                InvitationStatus::PENDING   => $this->bookingService->pending($booking, $user)
+            };
+        }
+        catch(\UnhandledMatchError $e){
+            throw new LogicException("L'état de la réservation souhaité n'est pas connu.", 500, $e);
+        }
+
+        return $this->redirectToRoute("home");
     }
 
     /**

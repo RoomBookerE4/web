@@ -2,28 +2,56 @@
 
 namespace App\Domain\Shared;
 
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
+use DomainException;
+use Mailjet\Resources;
 
 class MailerService
 {
-    public function __construct(private MailerInterface $mailer)
-    {}
-
-    public function sendEmail($to, $subject, $text, $html=null): void
-    {
-        $email = (new Email())
-            ->from('hello@example.com')
-            ->to($to)
-            //->cc('cc@example.com')
-            //->bcc('bcc@example.com')
-            //->replyTo('fabien@example.com')
-            //->priority(Email::PRIORITY_HIGH)
-            ->subject($subject)
-            ->text($text)
-            ->html($html);
-
-        $this->mailer->send($email);
-
+  
+  public function __construct(private string $apiKey, private string $secretKey)
+  {
+    
+  }
+  
+  public function sendEmail(string $toMail, string $toString, string $subject, string $text, ?string $html = null): array
+  {
+    try{
+      $mj = new \Mailjet\Client($this->apiKey, $this->secretKey,true,['version' => 'v3.1']);
+      $body = [
+        'Messages' => [
+          [
+            'From' => 
+            [
+              'Email' => "simon.duperray@reseau.eseo.fr",
+              'Name' => "Simon Duperray"
+            ],
+            'To' => [
+              [
+                'Email' => $toMail,
+                'Name' => $toString
+              ]
+            ],
+            'Cc' => [
+              [
+                'Email' => 'simon.duperray@reseau.eseo.fr',
+                'Name' => 'Simon'
+              ],
+              [
+                'Email' => 'alexandre.halope@reseau.eseo.fr',
+                'Name' => 'Alexandre'
+              ]
+            ],
+            'Subject' => $subject,
+            'TextPart' => $text,
+            'HTMLPart' => $html
+          ]
+        ]
+      ];
+      $response = $mj->post(Resources::$Email, ['body' => $body]);
+      return $response->getData();
     }
+    catch(\Exception $e){
+      throw new DomainException("Impossible d'envoyer un mail", 1);
+    }
+  }
 }
