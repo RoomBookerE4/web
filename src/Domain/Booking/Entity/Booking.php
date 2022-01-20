@@ -43,7 +43,7 @@ class Booking
     #[ORM\JoinColumn(name: 'idRoom', referencedColumnName: 'id')]
     private $room;
 
-    #[ORM\OneToMany(mappedBy: 'reservation', targetEntity: Participant::class, orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'booking', targetEntity: Participant::class, orphanRemoval: true, cascade: ['persist'])]
     private $participants;
 
     public function __construct()

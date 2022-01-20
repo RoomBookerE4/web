@@ -23,7 +23,7 @@ class BookingFormDTO{
     #[Assert\NotNull(message: 'La date de la réservation ne peut pas être nulle.')]
     #[Assert\Type(type: DateTime::class)]
     #[Assert\GreaterThanOrEqual('today')]
-    private DateTime $date;
+    private $date;
 
     /**
      * @var \DateTimeInterface

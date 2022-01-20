@@ -38,7 +38,9 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
         # - { path: ^/, roles: ROLE_USER } # Redirects all not connected users to login page.
-
+    role_hierarchy:
+        administrator: ROLE_MANAGEMENT
+        teacher: ROLE_MANAGEMENT
 when@test:
     security:
         password_hashers:
