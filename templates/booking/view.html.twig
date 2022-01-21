@@ -19,10 +19,8 @@
                         <ul class="list-group list-group-flush">
                             {% for participant in booking.participants %}
                                 {% if app.user.getId()==participant.getUser().getId() and participant.getIsInvitation()==true %}
-                                    {# <h5>is booker</h5> #}
                                     {% set buffer = true %}
                                 {% else %}
-                                    {# <h5>not booker</h5> #}
                                     {% set buffer = false %}
                                 {% endif %}
                                 
@@ -46,7 +44,7 @@
                         </div>
                     {% endif %}
                 {% else %}
-                    <h4>Réservation passée</h4>
+                    <h5>Réservation passée</h5>
                 {% endif %}
             </div>
         </div>
