@@ -13,11 +13,12 @@ use App\Domain\Shared\MailerService;
 use App\Domain\Booking\Entity\Booking;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Domain\Booking\Entity\Participant;
-use App\Domain\Booking\Exception\CannotBookException;
-use App\Domain\Booking\Exception\CannotCancelBookingException;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Routing\RouterInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Domain\Booking\Repository\BookingRepository;
+use App\Domain\Booking\Exception\CannotBookException;
+use App\Domain\Booking\Exception\CannotCancelBookingException;
 
 /**
  * Handles mutations for Booking.
@@ -29,7 +30,8 @@ class BookingService{
         private BookingRepository $bookingRepository,
         private MailerService $mailerService,
         private RouterInterface $router,
-        private Environment $twig
+        private Environment $twig,
+        private Security $security
     )
     {
         
@@ -68,8 +70,6 @@ class BookingService{
             throw new CannotBookException("La salle ".$dto->getRoom()." est déjà réservée à ce moment.");
         }
         
-        dump($startDateTime->add($bookingTime), $endDateTime);
-        dump($startDateTime->add($bookingTime) > $endDateTime);
         // We also need to check if the booking time is not > room maxTime.
         if($startDateTime->add($bookingTime) > $dto->getRoom()->getMaxTime()){
             throw new CannotBookException(sprintf("Cette salle ne peut pas être réservée plus de %s heures", $dto->getRoom()->getMaxTime()->format("H:m:s")));
@@ -200,7 +200,6 @@ class BookingService{
     public function accept(Booking $booking, User $user): void
     {
         $this->filterParticipantWithUser($booking, $user)->setInvitationStatus(InvitationStatus::ACCEPTED);
-        //$this->sendInvitationAnswer($booking, $user);
         $this->mailerService->sendEmail(
             $user->getEmail(),
             $user->getUserIdentifier(),
@@ -267,6 +266,33 @@ class BookingService{
     {
         if(!$this->isOrganizer($booking, $user) || $this->security->isGranted('ROLE_MANAGEMENT')){
             throw new CannotCancelBookingException("Un participant non organisateur ne peut pas annuler une réunion.");
+        }
+
+        /** @var Participant $participant */
+        foreach ($booking->getParticipants() as $participant) {
+            /**
+             * We want everyone to be informed, even the organizer:
+             * Meeting could have been canceled by an admin zB.
+             */
+            $user = $participant->getUser();
+
+            try{
+                $toMail = $user->getEmail();
+                $toString = $user->getUserIdentifier();
+                $subject = "Réunion annulée.";
+                $text = "Réunion annulée.";
+
+                $html = $this->twig->render('booking/_cancel.html.twig', [
+                    'firstName' => $user->getName(),
+                    'lastName' => $user->getSurname(),
+                    'booking' => $booking,
+                ]);
+
+                $this->mailerService->sendEmail($toMail, $toString, $subject, $text, $html);
+            }
+            catch(\Exception $e){
+                throw new CannotCancelBookingException("Envoi de mail impossible. La réunion n'a pas été annulée.", 1, $e);
+            }
         }
 
         // Just remove the related entities ! AND POUFF it has disappeared.

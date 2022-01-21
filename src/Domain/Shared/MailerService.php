@@ -16,7 +16,7 @@ class MailerService
   public function sendEmail(string $toMail, string $toString, string $subject, string $text, ?string $html = null): array
   {
     try{
-      $mj = new \Mailjet\Client($this->apiKey, $this->secretKey,true,['version' => 'v3.1']);
+      $mj = new \Mailjet\Client($this->apiKey, $this->secretKey, true, ['version' => 'v3.1']);
       $body = [
         'Messages' => [
           [
@@ -29,16 +29,6 @@ class MailerService
               [
                 'Email' => $toMail,
                 'Name' => $toString
-              ]
-            ],
-            'Cc' => [
-              [
-                'Email' => 'simon.duperray@reseau.eseo.fr',
-                'Name' => 'Simon'
-              ],
-              [
-                'Email' => 'alexandre.halope@reseau.eseo.fr',
-                'Name' => 'Alexandre'
               ]
             ],
             'Subject' => $subject,
