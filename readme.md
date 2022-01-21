@@ -19,7 +19,6 @@ Technical
 - Accept or reject an invitation [ALEXANDRE] ✅
 - Notify participants of a canceled meeting. [SIMON] ✅
 - Rajouter espace entre les deux cards page d'accueil. [SIMON]
-- Authentification après mot de passe oublié [ALEXANDRE]
 - Page de consultation d'une réservation/d'un meeting. [SIMON]
 - Check room is bookable at its own timeOpen and timeClose and maxTime of a room. [ALEXANDRE] ✅
 - Add admin and establishment [ALEXANDRE]
