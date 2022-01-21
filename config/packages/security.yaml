@@ -40,6 +40,7 @@ security:
         - { path: ^/login, roles: PUBLIC_ACCESS } # Allow not connected user to login.
         - { path: ^/user/password-forgotten, roles: PUBLIC_ACCESS } # Allow not connected user to reset their password.
         - { path: ^/user/change-password, roles: PUBLIC_ACCESS } # Allow not connected user to reset their password.
+        - { path: ^/registration/establishment, roles: PUBLIC_ACCESS } # Allow not connected user to reset their password.
         - { path: ^/, roles: ROLE_USER } # Redirects all not connected users to login page.
     role_hierarchy:
         administrator: ROLE_MANAGEMENT

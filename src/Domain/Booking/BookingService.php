@@ -56,6 +56,7 @@ class BookingService{
         $endDateTime = DateTime::createFromInterface($dto->getTimeEnd())->setDate($year, $month, $day);
         // Be aware to actually compute start and THEN end because we need to have a positive interval.
         $bookingTime = $startDateTime->diff($endDateTime);
+        $bookingTimeMax = $startDateTime->diff($dto->getRoom()->getMaxTime());
 
         // Assert that time end is AFTER the time start.
         if($endDateTime < $startDateTime){
@@ -68,7 +69,7 @@ class BookingService{
         }
         
         // We also need to check if the booking time is not > room maxTime.
-        if($startDateTime->add($bookingTime) > $dto->getRoom()->getMaxTime()){
+        if($startDateTime->add($bookingTime) > $startDateTime->add($bookingTimeMax)){
             throw new CannotBookException(sprintf("Cette salle ne peut pas être réservée plus de %s heures", $dto->getRoom()->getMaxTime()->format("H:m:s")));
         }
 

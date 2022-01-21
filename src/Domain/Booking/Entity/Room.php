@@ -37,13 +37,13 @@ class Room
     /**
      * @var \DateTime|null
      */
-    #[ORM\Column(name: 'timeOpen', type: 'datetime', nullable: false, options: ['default' => null])]
+    #[ORM\Column(name: 'timeOpen', type: 'time', nullable: false, options: ['default' => null])]
     private $timeOpen = null;
 
     /**
      * @var \DateTime|null
      */
-    #[ORM\Column(name: 'timeClose', type: 'datetime', nullable: false, options: ['default' => null])]
+    #[ORM\Column(name: 'timeClose', type: 'time', nullable: false, options: ['default' => null])]
     private $timeClose = null;
 
     /**
