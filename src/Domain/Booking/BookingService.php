@@ -3,9 +3,7 @@
 namespace App\Domain\Booking;
 
 use DateTime;
-use Exception;
-use DomainException;
-use Twig\Environment;
+
 use DateTimeInterface;
 use App\Domain\Auth\Entity\User;
 use App\Domain\Booking\Entity\Room;
@@ -30,7 +28,6 @@ class BookingService{
         private BookingRepository $bookingRepository,
         private MailerService $mailerService,
         private RouterInterface $router,
-        private Environment $twig,
         private Security $security
     )
     {
@@ -112,16 +109,22 @@ class BookingService{
 
                 $acceptUrl = $this->router->generate('invitation_answer', ['id' => $booking->getId(), 'userId' => $participantUser->getId(), 'state' => 'accept'], RouterInterface::ABSOLUTE_URL);
                 $rejectUrl = $this->router->generate('invitation_answer', ['id' => $booking->getId(), 'userId' => $participantUser->getId(), 'state' => 'reject'], RouterInterface::ABSOLUTE_URL);
-                $html = $this->twig->render('booking/_invitation.html.twig', [
-                    'firstName' => $participantUser->getName(),
-                    'lastName' => $participantUser->getSurname(),
-                    'organizer' => $organizer,
-                    'booking' => $booking,
-                    'acceptUrl' => $acceptUrl,
-                    'rejectUrl' => $rejectUrl
-                ]);
 
-                $this->mailerService->sendEmail($toMail, $toString, $subject, $text, $html);
+                $this->mailerService->sendEmail(
+                    $toMail,
+                    $toString,
+                    $subject,
+                    $text,
+                    'booking/_invitation.html.twig',
+                    [
+                        'firstName' => $participantUser->getName(),
+                        'lastName' => $participantUser->getSurname(),
+                        'organizer' => $organizer,
+                        'booking' => $booking,
+                        'acceptUrl' => $acceptUrl,
+                        'rejectUrl' => $rejectUrl
+                    ]
+                );
             }
             catch(\Exception $e){
                 throw new CannotBookException("Envoi de mail impossible.", 1, $e);
@@ -135,7 +138,6 @@ class BookingService{
             throw new CannotBookException("Impossible d'enregistrer la réservation.");
         }
         
-
         return $booking;
     }
 
@@ -204,8 +206,7 @@ class BookingService{
             $user->getEmail(),
             $user->getUserIdentifier(),
             sprintf("%s a accepté votre invitation", $user),
-            sprintf("%s a accepté votre invitation pour la réunion du %s", $user, $booking->getTimeStart()->format('d/m/Y - H:m:s')),
-            null
+            sprintf("%s a accepté votre invitation pour la réunion du %s", $user, $booking->getTimeStart()->format('d/m/Y - H:m:s'))
         );
 
         $this->em->flush();
@@ -226,8 +227,7 @@ class BookingService{
             $user->getEmail(),
             $user->getUserIdentifier(),
             sprintf("%s a refusé votre invitation", $user),
-            sprintf("%s a refusé votre invitation pour la réunion du %s", $user, $booking->getTimeStart()->format('d/m/Y - H:m:s')),
-            null
+            sprintf("%s a refusé votre invitation pour la réunion du %s", $user, $booking->getTimeStart()->format('d/m/Y - H:m:s'))
         );
 
         $this->em->flush();
@@ -248,8 +248,7 @@ class BookingService{
             $user->getEmail(),
             $user->getUserIdentifier(),
             sprintf("%s a mis votre invitation en attente", $user),
-            sprintf("%s a mis votre invitation en attente pour la réunion du %s", $user, $booking->getTimeStart()->format('d/m/Y - H:m:s')),
-            null
+            sprintf("%s a mis votre invitation en attente pour la réunion du %s", $user, $booking->getTimeStart()->format('d/m/Y - H:m:s'))
         );
 
         $this->em->flush();
@@ -282,13 +281,18 @@ class BookingService{
                 $subject = "Réunion annulée.";
                 $text = "Réunion annulée.";
 
-                $html = $this->twig->render('booking/_cancel.html.twig', [
-                    'firstName' => $user->getName(),
-                    'lastName' => $user->getSurname(),
-                    'booking' => $booking,
-                ]);
-
-                $this->mailerService->sendEmail($toMail, $toString, $subject, $text, $html);
+                $this->mailerService->sendEmail(
+                    $toMail,
+                    $toString,
+                    $subject,
+                    $text, 
+                    'booking/_cancel.html.twig', 
+                    [
+                        'firstName' => $user->getName(),
+                        'lastName' => $user->getSurname(),
+                        'booking' => $booking,
+                    ]
+                );
             }
             catch(\Exception $e){
                 throw new CannotCancelBookingException("Envoi de mail impossible. La réunion n'a pas été annulée.", 1, $e);
