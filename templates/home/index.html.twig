@@ -24,7 +24,14 @@
             <div class="card-body">
                 <ul class="list-group list-group-flush">
                 {% for meeting in meetings %}
-                    <li class="list-group-item"><span class="text-muted fs-6"> {{ meeting.timeStart|date('d/m') }}</span> - {{ meeting.timeStart|date('H:m') }} &#10145; {{ meeting.timeEnd|date('H:m') }} <span class="float-end">&#128205; {{ meeting.room }}</span><a href="{{ path('booking_view', {'id': meeting.id}) }}">More details</a></li>
+                    <li class="list-group-item">
+                        <span class="text-muted fs-6"> {{ meeting.timeStart|date('d/m') }}</span>
+                         - {{ meeting.timeStart|date('H:m') }} &#10145; {{ meeting.timeEnd|date('H:m') }} 
+                        <span class="float-end">&#128205; {{ meeting.room }}</span>
+                        <button type="button" class="btn btn-primary">
+                            <a style="color:inherit; text-decoration:none;" href="{{ path('booking_view', {'id': meeting.id}) }}">More</a>
+                        </button>
+                    </li>
                 {% else %}
                     <span>Aucun rendez-vous prévu.</span>
                 {% endfor %}
