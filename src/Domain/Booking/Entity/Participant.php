@@ -43,7 +43,7 @@ class Participant
     /**
      * @var Booking
      */
-    #[ORM\ManyToOne(targetEntity: Booking::class)]
+    #[ORM\ManyToOne(targetEntity: Booking::class, inversedBy: 'participants')]
     #[ORM\JoinColumn(name: 'idReservation', referencedColumnName: 'id', nullable: false)]
     private $booking;
 

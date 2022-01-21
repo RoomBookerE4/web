@@ -4,6 +4,7 @@ namespace App\Domain\Booking\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Domain\Booking\Entity\Establishment;
+use DateTimeInterface;
 
 /**
  * Room
@@ -54,7 +55,7 @@ class Room
     /**
      * @var string|null
      */
-    #[ORM\Column(name: 'maxTime', type: 'string', length: 255, nullable: true, options: ['default' => null])]
+    #[ORM\Column(name: 'maxTime', type: 'time', length: 255, nullable: true, options: ['default' => null])]
     private $maxTime = null;
 
     /**
@@ -132,12 +133,12 @@ class Room
         return $this;
     }
 
-    public function getMaxTime(): ?string
+    public function getMaxTime(): ?DateTimeInterface
     {
         return $this->maxTime;
     }
 
-    public function setMaxTime(?string $maxTime): self
+    public function setMaxTime(?DateTimeInterface $maxTime): self
     {
         $this->maxTime = $maxTime;
 
