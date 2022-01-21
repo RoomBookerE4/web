@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Domain\Booking\Exception\CannotBookException;
+use App\Domain\Booking\Exception\CannotCancelBookingException;
 use App\Domain\Booking\InvitationStatus;
 use LogicException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
@@ -78,6 +79,20 @@ class BookingController extends AbstractController
             throw new LogicException("L'état de la réservation souhaité n'est pas connu.", 500, $e);
         }
 
+        return $this->redirectToRoute("home");
+    }
+
+    #[Route("/cancel/{id}", name: "booking_cancel")]
+    #[IsGranted('ROLE_USER')]
+    public function cancel(Booking $booking): Response
+    {
+        try {
+            $this->bookingService->cancel($booking, $this->getUserEntity());
+            $this->addFlash('success', "La réservation a bien été annulée. Un mail d'information à été envoyé à tous les participants.");
+        } catch (CannotCancelBookingException $e) {
+            $this->addFlash('danger', $e->getMessage());
+        }
+        
         return $this->redirectToRoute("home");
     }
 

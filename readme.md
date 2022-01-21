@@ -17,7 +17,7 @@ Technical
 - Annuler un meeting [SIMON] ✅
 - Check if room is already booked [SIMON] ✅
 - Accept or reject an invitation [ALEXANDRE] ✅
-- Notify participants of a canceled meeting. [SIMON]
+- Notify participants of a canceled meeting. [SIMON] ✅
 - Rajouter espace entre les deux cards page d'accueil. [SIMON]
 - Authentification après mot de passe oublié [ALEXANDRE]
 - Page de consultation d'une réservation/d'un meeting. [SIMON]
