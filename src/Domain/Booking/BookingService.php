@@ -12,6 +12,7 @@ use App\Domain\Booking\Entity\Booking;
 use App\Domain\Booking\InvitationStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Domain\Booking\Entity\Participant;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Routing\RouterInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Domain\Booking\Repository\BookingRepository;
