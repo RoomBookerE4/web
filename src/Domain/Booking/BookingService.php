@@ -3,6 +3,8 @@
 namespace App\Domain\Booking;
 
 use DateTime;
+use Exception;
+use DomainException;
 use Twig\Environment;
 use DateTimeInterface;
 use App\Domain\Auth\Entity\User;
@@ -11,12 +13,11 @@ use App\Domain\Shared\MailerService;
 use App\Domain\Booking\Entity\Booking;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Domain\Booking\Entity\Participant;
-use Symfony\Component\Routing\RouterInterface;
-use App\Domain\Booking\Repository\BookingRepository;
 use App\Domain\Booking\Exception\CannotBookException;
-use App\Domain\Booking\Answer\BookingAnswerMailInterface;
+use App\Domain\Booking\Exception\CannotCancelBookingException;
+use Symfony\Component\Routing\RouterInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use DomainException;
+use App\Domain\Booking\Repository\BookingRepository;
 
 /**
  * Handles mutations for Booking.
@@ -64,12 +65,14 @@ class BookingService{
 
         // We need to check if the room is booked at that time.
         if($this->isRoomBooked($dto->getRoom(), $startDateTime, $endDateTime)){
-            throw new CannotBookException("La salle est déjà réservée à ce moment.");
+            throw new CannotBookException("La salle ".$dto->getRoom()." est déjà réservée à ce moment.");
         }
         
+        dump($startDateTime->add($bookingTime), $endDateTime);
+        dump($startDateTime->add($bookingTime) > $endDateTime);
         // We also need to check if the booking time is not > room maxTime.
-        if($startDateTime->add($bookingTime) > $endDateTime){
-            throw new CannotBookException(sprintf("Cette salle ne peut pas être réservée plus de %s", $dto->getRoom()->getMaxTime()->format("H heures m minutes.")));
+        if($startDateTime->add($bookingTime) > $dto->getRoom()->getMaxTime()){
+            throw new CannotBookException(sprintf("Cette salle ne peut pas être réservée plus de %s heures", $dto->getRoom()->getMaxTime()->format("H:m:s")));
         }
 
         $booking->setRoom($dto->getRoom());
@@ -80,8 +83,8 @@ class BookingService{
 
         // We persist the booking in the database because we need to have its ID to generate corresponding URL.
         try{
-            //$this->em->persist($booking);
-            //$this->em->flush();
+            $this->em->persist($booking);
+            $this->em->flush();
         }
         catch(\Exception $e){
             throw new CannotBookException("Impossible d'enregistrer la réservation.");
@@ -126,7 +129,7 @@ class BookingService{
         }
 
         try{
-            //$this->em->flush();
+            $this->em->flush();
         }
         catch(\Exception $e){
             throw new CannotBookException("Impossible d'enregistrer la réservation.");
@@ -263,7 +266,7 @@ class BookingService{
     public function cancel(Booking $booking, User $user): void
     {
         if(!$this->isOrganizer($booking, $user) || $this->security->isGranted('ROLE_MANAGEMENT')){
-            throw new DomainException("Un participant non organisateur ne peut pas annuler une réunion.");
+            throw new CannotCancelBookingException("Un participant non organisateur ne peut pas annuler une réunion.");
         }
 
         // Just remove the related entities ! AND POUFF it has disappeared.
@@ -298,7 +301,7 @@ class BookingService{
         });
 
         if($usersFiltered->isEmpty()){
-            throw new DomainException("La réunion ne contient pas le participant ". $user);
+            throw new \Exception("La réunion ne contient pas le participant ". $user);
         }
 
         return $usersFiltered->first();

@@ -44,12 +44,11 @@ class BookingController extends AbstractController
             
             try{
                 $this->bookingService->book($booking, $this->getUser());
+                $this->addFlash('success', 'Reservation effectuée !');
             }
             catch(CannotBookException $e){
-                $this->addFlash('danger', 'Impossible de réserver la salle.');
+                $this->addFlash('danger', $e->getMessage());
             }
-
-            $this->addFlash('success', 'Reservation effectuée !');
 
             return $this->redirectToRoute('home');
         }
