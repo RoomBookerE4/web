@@ -3,9 +3,7 @@
 namespace App\Domain\Booking;
 
 use DateTime;
-use Exception;
-use DomainException;
-use Twig\Environment;
+
 use DateTimeInterface;
 use App\Domain\Auth\Entity\User;
 use App\Domain\Booking\Entity\Room;
@@ -30,7 +28,7 @@ class BookingService{
         private BookingRepository $bookingRepository,
         private MailerService $mailerService,
         private RouterInterface $router,
-        private Environment $twig
+        private Security $security
     )
     {
         
@@ -58,6 +56,7 @@ class BookingService{
         $endDateTime = DateTime::createFromInterface($dto->getTimeEnd())->setDate($year, $month, $day);
         // Be aware to actually compute start and THEN end because we need to have a positive interval.
         $bookingTime = $startDateTime->diff($endDateTime);
+        $bookingTimeMax = $startDateTime->diff($dto->getRoom()->getMaxTime());
 
         // Assert that time end is AFTER the time start.
         if($endDateTime < $startDateTime){
@@ -69,10 +68,8 @@ class BookingService{
             throw new CannotBookException("La salle ".$dto->getRoom()." est déjà réservée à ce moment.");
         }
         
-        dump($startDateTime->add($bookingTime), $endDateTime);
-        dump($startDateTime->add($bookingTime) > $endDateTime);
         // We also need to check if the booking time is not > room maxTime.
-        if($startDateTime->add($bookingTime) > $dto->getRoom()->getMaxTime()){
+        if($startDateTime->add($bookingTime) > $startDateTime->add($bookingTimeMax)){
             throw new CannotBookException(sprintf("Cette salle ne peut pas être réservée plus de %s heures", $dto->getRoom()->getMaxTime()->format("H:m:s")));
         }
 
@@ -122,7 +119,21 @@ class BookingService{
                     'rejectUrl' => $rejectUrl
                 ]);
 
-                $this->mailerService->sendEmail($toMail, $toString, $subject, $text, $html);
+                $this->mailerService->sendEmail(
+                    $toMail,
+                    $toString,
+                    $subject,
+                    $text,
+                    'booking/_invitation.html.twig',
+                    [
+                        'firstName' => $participantUser->getName(),
+                        'lastName' => $participantUser->getSurname(),
+                        'organizer' => $organizer,
+                        'booking' => $booking,
+                        'acceptUrl' => $acceptUrl,
+                        'rejectUrl' => $rejectUrl
+                    ]
+                );
             }
             catch(\Exception $e){
                 throw new CannotBookException("Envoi de mail impossible.", 1, $e);
@@ -136,7 +147,6 @@ class BookingService{
             throw new CannotBookException("Impossible d'enregistrer la réservation.");
         }
         
-
         return $booking;
     }
 
@@ -201,13 +211,11 @@ class BookingService{
     public function accept(Booking $booking, User $user): void
     {
         $this->filterParticipantWithUser($booking, $user)->setInvitationStatus(InvitationStatus::ACCEPTED);
-        //$this->sendInvitationAnswer($booking, $user);
         $this->mailerService->sendEmail(
             $user->getEmail(),
             $user->getUserIdentifier(),
             sprintf("%s a accepté votre invitation", $user),
-            sprintf("%s a accepté votre invitation pour la réunion du %s", $user, $booking->getTimeStart()->format('d/m/Y - H:m:s')),
-            null
+            sprintf("%s a accepté votre invitation pour la réunion du %s", $user, $booking->getTimeStart()->format('d/m/Y - H:m:s'))
         );
 
         $this->em->flush();
@@ -228,8 +236,7 @@ class BookingService{
             $user->getEmail(),
             $user->getUserIdentifier(),
             sprintf("%s a refusé votre invitation", $user),
-            sprintf("%s a refusé votre invitation pour la réunion du %s", $user, $booking->getTimeStart()->format('d/m/Y - H:m:s')),
-            null
+            sprintf("%s a refusé votre invitation pour la réunion du %s", $user, $booking->getTimeStart()->format('d/m/Y - H:m:s'))
         );
 
         $this->em->flush();
@@ -250,8 +257,7 @@ class BookingService{
             $user->getEmail(),
             $user->getUserIdentifier(),
             sprintf("%s a mis votre invitation en attente", $user),
-            sprintf("%s a mis votre invitation en attente pour la réunion du %s", $user, $booking->getTimeStart()->format('d/m/Y - H:m:s')),
-            null
+            sprintf("%s a mis votre invitation en attente pour la réunion du %s", $user, $booking->getTimeStart()->format('d/m/Y - H:m:s'))
         );
 
         $this->em->flush();
@@ -268,6 +274,38 @@ class BookingService{
     {
         if(!$this->isOrganizer($booking, $user) || $this->security->isGranted('ROLE_MANAGEMENT')){
             throw new CannotCancelBookingException("Un participant non organisateur ne peut pas annuler une réunion.");
+        }
+
+        /** @var Participant $participant */
+        foreach ($booking->getParticipants() as $participant) {
+            /**
+             * We want everyone to be informed, even the organizer:
+             * Meeting could have been canceled by an admin zB.
+             */
+            $user = $participant->getUser();
+
+            try{
+                $toMail = $user->getEmail();
+                $toString = $user->getUserIdentifier();
+                $subject = "Réunion annulée.";
+                $text = "Réunion annulée.";
+
+                $this->mailerService->sendEmail(
+                    $toMail,
+                    $toString,
+                    $subject,
+                    $text, 
+                    'booking/_cancel.html.twig', 
+                    [
+                        'firstName' => $user->getName(),
+                        'lastName' => $user->getSurname(),
+                        'booking' => $booking,
+                    ]
+                );
+            }
+            catch(\Exception $e){
+                throw new CannotCancelBookingException("Envoi de mail impossible. La réunion n'a pas été annulée.", 1, $e);
+            }
         }
 
         // Just remove the related entities ! AND POUFF it has disappeared.

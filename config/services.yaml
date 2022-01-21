@@ -27,3 +27,6 @@ services:
         arguments:
             $apiKey: '%env(MAILJET_API_KEY)%'
             $secretKey: '%env(MAILJET_SECRET_KEY)%'
+    App\Domain\Shared\WeatherService:
+        arguments:
+            $apiKey: '%env(WEATHER_API_KEY)%'

@@ -6,6 +6,7 @@ use LogicException;
 
 use App\Domain\Auth\Entity\User;
 use App\Domain\Auth\Repository\UserRepository;
+use App\Domain\Shared\MailerService;
 use App\Domain\Shared\UtilString;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
@@ -24,7 +25,8 @@ class UserService{
     public function __construct(
         private EntityManagerInterface $em,
         private UserRepository $userRepository,
-        private UserPasswordHasherInterface $passwordHasher
+        private UserPasswordHasherInterface $passwordHasher,
+        private MailerService $mailerService
     )
     {
         
@@ -84,6 +86,17 @@ class UserService{
         $user->setResetToken(UtilString::randomString());
 
         // TODO : Send an email with the correct informations.
+        $this->mailerService->sendEmail(
+            $user->getEmail(),
+            $user->getUserIdentifier(),
+            "Mot de passe oublié",
+            "Votre mot de passe oublié",
+            "user/_mail_changePassword.html.twig",
+            [
+                'user' => $user,
+                'tokenPassword' => $user->getResetToken()
+            ]
+        );
 
         $this->em->flush();
     }

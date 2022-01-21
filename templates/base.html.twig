@@ -34,11 +34,13 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="me-auto mb-2 mb-md-0 text-white">
+                        <!-- TODO s'il nous reste du temps. -->
                         <span>Aujourd'hui, il caille 🥶.</span>
                     </div>
-                    <div class="d-flex">
+                    <div class="d-flex align-items-center">
                     {% if is_granted('ROLE_USER') %}
-                        <span id="username" class="text-white">Bonjour, {{ app.user.name ~ " " ~ app.user.surname }}</span>
+                        <span id="username" class="text-white">Bonjour, {{ app.user.name ~ " " ~ app.user.surname }}</span>&nbsp;&nbsp;
+                        <a href="{{ path('logout') }}" class="btn btn-danger btn-sm">🔒</a>
                     {% endif %}
                     </div>
                 </div>
