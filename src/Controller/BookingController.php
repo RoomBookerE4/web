@@ -58,6 +58,16 @@ class BookingController extends AbstractController
         ]);
     }
 
+    #[Route("/booking/{id}", name: "booking_view")]
+    public function view(Booking $booking): Response
+    {
+        // TODO : Check if user is granted to view the booking.
+        
+        return $this->render('booking/view.html.twig', [
+            'booking' => $booking
+        ]);
+    }
+
     #[Route('/invitation/{id}/{userId}/{state}', name: "invitation_answer")]
     #[Entity("user", expr: "repository.find(userId)", class: User::class)]
     #[IsGranted("ROLE_USER")]
