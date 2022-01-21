@@ -11,13 +11,14 @@ use App\Domain\Auth\Entity\User;
 use App\Domain\Booking\Entity\Room;
 use App\Domain\Shared\MailerService;
 use App\Domain\Booking\Entity\Booking;
+use App\Domain\Booking\InvitationStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Domain\Booking\Entity\Participant;
-use App\Domain\Booking\Exception\CannotBookException;
-use App\Domain\Booking\Exception\CannotCancelBookingException;
 use Symfony\Component\Routing\RouterInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Domain\Booking\Repository\BookingRepository;
+use App\Domain\Booking\Exception\CannotBookException;
+use App\Domain\Booking\Exception\CannotCancelBookingException;
 
 /**
  * Handles mutations for Booking.
@@ -110,8 +111,8 @@ class BookingService{
                 $subject = "Invitation à une réunion";
                 $text = "Invitation à une réunion.";
 
-                $acceptUrl = $this->router->generate('invitation_answer', ['id' => $booking->getId(), 'userId' => $participantUser->getId(), 'state' => 'accept'], RouterInterface::ABSOLUTE_URL);
-                $rejectUrl = $this->router->generate('invitation_answer', ['id' => $booking->getId(), 'userId' => $participantUser->getId(), 'state' => 'reject'], RouterInterface::ABSOLUTE_URL);
+                $acceptUrl = $this->router->generate('invitation_answer', ['id' => $booking->getId(), 'userId' => $participantUser->getId(), 'state' => InvitationStatus::ACCEPTED], RouterInterface::ABSOLUTE_URL);
+                $rejectUrl = $this->router->generate('invitation_answer', ['id' => $booking->getId(), 'userId' => $participantUser->getId(), 'state' => InvitationStatus::REJECTED], RouterInterface::ABSOLUTE_URL);
                 $html = $this->twig->render('booking/_invitation.html.twig', [
                     'firstName' => $participantUser->getName(),
                     'lastName' => $participantUser->getSurname(),

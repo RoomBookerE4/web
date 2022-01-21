@@ -1,5 +1,37 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
-{{ dump(booking) }}
+    {{ dump(booking) }}
+
+    {{ dump(app.user) }}
+
+    {{ dump(booking.getParticipants()) }}
+
+    <div class="col-md-12 col-xs-12 col-lg-4">
+        <div class="card m-3">
+            <div class="card-header card-outline-primary">
+                <h5 class="card-title">Réservation du {{ booking.timeStart|date('Y-m-d') }}</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Identifiant de la réservation:</strong> {{ booking.id }}</li>
+                    <li class="list-group-item"><strong>Heure de début:</strong> {{ booking.timeStart|date('H:i') }}</li>
+                    <li class="list-group-item"><strong>Heure de fin:</strong> {{ booking.timeEnd|date('H:i') }}</li>
+                    <li class="list-group-item"><strong>Salle:</strong> {{ booking.room }}</li>
+                    <li class="list-group-item">
+                        <strong>Participants</strong>
+                        <ul class="list-group list-group-flush">
+                            {% for participant in booking.participants %}
+                                <li class="list-group-item">
+                                    {{ participant.getUser() }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+                
+                <button type="button" class="btn btn-primary">Primary</button>
+            </div>
+        </div>
+    </div>
 {% endblock %}
