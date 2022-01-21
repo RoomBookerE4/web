@@ -40,11 +40,11 @@ class BookingRepository extends ServiceEntityRepository
             $query->setParameter('room', $room);
         }
         if($start){
-            $query->andWhere('b.timeStart > :start');
+            $query->andWhere('b.timeStart >= :start');
             $query->setParameter('start', $start);
         }
         if($end){
-            $query->andWhere('b.timeEnd < :end');
+            $query->andWhere('b.timeEnd <= :end');
             $query->setParameter('end', $end);
         }
 

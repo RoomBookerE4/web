@@ -51,16 +51,26 @@ class BookingService{
         $year = (int) $dto->getDate()->format('Y');
         $month = (int) $dto->getDate()->format('m');
         $day = (int) $dto->getDate()->format('d');
-
+        
         $startDateTime = DateTime::createFromInterface($dto->getTimeStart())->setDate($year, $month, $day);
         $endDateTime = DateTime::createFromInterface($dto->getTimeEnd())->setDate($year, $month, $day);
+        // Be aware to actually compute start and THEN end because we need to have a positive interval.
+        $bookingTime = $startDateTime->diff($endDateTime);
 
         // Assert that time end is AFTER the time start.
-        if($endDateTime < $startDateTime)
-        {
+        if($endDateTime < $startDateTime){
             throw new CannotBookException("Impossible d'avoir une heure de fin inférieure à l'heure de début.", 500, null);
         }
-        // TODO : Check if the room is already booked at that time.
+
+        // We need to check if the room is booked at that time.
+        if($this->isRoomBooked($dto->getRoom(), $startDateTime, $endDateTime)){
+            throw new CannotBookException("La salle est déjà réservée à ce moment.");
+        }
+        
+        // We also need to check if the booking time is not > room maxTime.
+        if($startDateTime->add($bookingTime) > $endDateTime){
+            throw new CannotBookException(sprintf("Cette salle ne peut pas être réservée plus de %s", $dto->getRoom()->getMaxTime()->format("H heures m minutes.")));
+        }
 
         $booking->setRoom($dto->getRoom());
         $booking->setTimeStart($startDateTime);
@@ -70,8 +80,8 @@ class BookingService{
 
         // We persist the booking in the database because we need to have its ID to generate corresponding URL.
         try{
-            $this->em->persist($booking);
-            $this->em->flush();
+            //$this->em->persist($booking);
+            //$this->em->flush();
         }
         catch(\Exception $e){
             throw new CannotBookException("Impossible d'enregistrer la réservation.");
@@ -116,7 +126,7 @@ class BookingService{
         }
 
         try{
-            $this->em->flush();
+            //$this->em->flush();
         }
         catch(\Exception $e){
             throw new CannotBookException("Impossible d'enregistrer la réservation.");
@@ -128,7 +138,6 @@ class BookingService{
 
     /**
      * Find meetings. Aggregate function useful for internal use only.
-     * CAUTION : This method can be deleted in next version.
      *
      * @param User|null $user
      * @param Room|null $room
@@ -175,9 +184,7 @@ class BookingService{
     {
         $meetings = $this->bookingRepository->findMeetings(null, $room, $start, $end);
 
-        // Checks wether the meetings are "null" or a proper array ... ternary
-
-        return true;
+        return count($meetings) > 0;
     }
 
     /**
