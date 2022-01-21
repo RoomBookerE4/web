@@ -9,6 +9,7 @@ use App\Domain\Booking\Entity\Room;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\GreaterThan;
 
 /**
  * Booking Form DTO.
@@ -36,7 +37,7 @@ class BookingFormDTO{
      * @var \DateTimeInterface
      */
     #[Assert\NotNull(message: "L'heure de fin de la réunion doit être précisée.")]
-    #[Assert\GreaterThanOrEqual(propertyPath: 'timeStart')]
+    #[Assert\GreaterThan(propertyPath: 'timeStart')]
     #[Assert\Type(type: DateTimeInterface::class, message: "L'heure de fin de réunion ne correspond à aucun format de date connu.")]
     private DateTimeInterface $timeEnd;
 

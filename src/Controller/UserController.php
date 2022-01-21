@@ -94,7 +94,6 @@ class UserController extends AbstractController
         // Find the corresponding user. Nevertheless, we need to be sure the password change has been asked within the last 3 hours.
         $user = $this->userService->findByResetToken($tokenPassword);
         if($user === null){
-            dump("Réinitialisation impossible");
             $this->addFlash('danger', 'Réinitialisation impossible.');
             return $this->redirectToRoute('login');
         }

@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Domain\Booking\Exception\CannotBookException;
+use App\Domain\Booking\Exception\CannotCancelBookingException;
 use App\Domain\Booking\InvitationStatus;
 use LogicException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
@@ -44,12 +45,11 @@ class BookingController extends AbstractController
             
             try{
                 $this->bookingService->book($booking, $this->getUser());
+                $this->addFlash('success', 'Reservation effectuée !');
             }
             catch(CannotBookException $e){
-                $this->addFlash('danger', 'Impossible de réserver la salle.');
+                $this->addFlash('danger', $e->getMessage());
             }
-
-            $this->addFlash('success', 'Reservation effectuée !');
 
             return $this->redirectToRoute('home');
         }
@@ -70,15 +70,29 @@ class BookingController extends AbstractController
 
         try{
             match($state){
-                InvitationStatus::ACCEPTED  => $this->bookingService->accept($booking, $user),
-                InvitationStatus::REJECTED  => $this->bookingService->reject($booking, $user),
-                InvitationStatus::PENDING   => $this->bookingService->pending($booking, $user)
+                InvitationStatus::ACCEPTED  => $this->bookingService->accept($booking, $user) && $this->addFlash('success', 'Invitation acceptée'),
+                InvitationStatus::REJECTED  => $this->bookingService->reject($booking, $user) && $this->addFlash('danger', 'Invitation refusée'),
+                InvitationStatus::PENDING   => $this->bookingService->pending($booking, $user) && $this->addFlash('notice', 'Invitation en attente')
             };
         }
         catch(\UnhandledMatchError $e){
             throw new LogicException("L'état de la réservation souhaité n'est pas connu.", 500, $e);
         }
 
+        return $this->redirectToRoute("home");
+    }
+
+    #[Route("/cancel/{id}", name: "booking_cancel")]
+    #[IsGranted('ROLE_USER')]
+    public function cancel(Booking $booking): Response
+    {
+        try {
+            $this->bookingService->cancel($booking, $this->getUserEntity());
+            $this->addFlash('success', "La réservation a bien été annulée. Un mail d'information à été envoyé à tous les participants.");
+        } catch (CannotCancelBookingException $e) {
+            $this->addFlash('danger', $e->getMessage());
+        }
+        
         return $this->redirectToRoute("home");
     }
 

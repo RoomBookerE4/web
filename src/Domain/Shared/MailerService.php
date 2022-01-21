@@ -4,19 +4,25 @@ namespace App\Domain\Shared;
 
 use DomainException;
 use Mailjet\Resources;
+use Twig\Environment;
 
 class MailerService
 {
   
-  public function __construct(private string $apiKey, private string $secretKey)
+  public function __construct(
+    private string $apiKey,
+    private string $secretKey,
+    private Environment $twig
+  )
   {
     
   }
   
-  public function sendEmail(string $toMail, string $toString, string $subject, string $text, ?string $html = null): array
+  public function sendEmail(string $toMail, string $toString, string $subject, string $text, ?string $template = null, ?array $parameters = []): array
   {
+    $html = $this->twig->render($template, $parameters);
     try{
-      $mj = new \Mailjet\Client($this->apiKey, $this->secretKey,true,['version' => 'v3.1']);
+      $mj = new \Mailjet\Client($this->apiKey, $this->secretKey, true, ['version' => 'v3.1']);
       $body = [
         'Messages' => [
           [
@@ -29,16 +35,6 @@ class MailerService
               [
                 'Email' => $toMail,
                 'Name' => $toString
-              ]
-            ],
-            'Cc' => [
-              [
-                'Email' => 'simon.duperray@reseau.eseo.fr',
-                'Name' => 'Simon'
-              ],
-              [
-                'Email' => 'alexandre.halope@reseau.eseo.fr',
-                'Name' => 'Alexandre'
               ]
             ],
             'Subject' => $subject,
